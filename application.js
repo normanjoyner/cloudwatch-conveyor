@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var fs = require("fs");
 var _ = require("lodash");
 var async = require("async");
@@ -11,7 +12,7 @@ nomnom.option("version", {
     abbr: "v",
     help: "print version and exit",
     callback: function(){
-        return ["v", pkg.version].join("")
+        return pkg.version;
     }
 });
 
