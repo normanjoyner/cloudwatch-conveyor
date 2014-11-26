@@ -1,0 +1,83 @@
+{
+  "name": "cloudwatch-conveyor",
+  "version": "0.0.0",
+  "dependencies": {
+    "async": {
+      "version": "0.9.0",
+      "from": "async@"
+    },
+    "aws-sdk": {
+      "version": "2.0.29",
+      "from": "aws-sdk@",
+      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.0.29.tgz",
+      "dependencies": {
+        "xml2js": {
+          "version": "0.2.6",
+          "from": "xml2js@0.2.6",
+          "resolved": "https://registry.npmjs.org/xml2js/-/xml2js-0.2.6.tgz",
+          "dependencies": {
+            "sax": {
+              "version": "0.4.2",
+              "from": "sax@0.4.2"
+            }
+          }
+        },
+        "xmlbuilder": {
+          "version": "0.4.2",
+          "from": "xmlbuilder@0.4.2",
+          "resolved": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-0.4.2.tgz"
+        }
+      }
+    },
+    "graphite": {
+      "version": "0.0.6",
+      "from": "graphite@",
+      "resolved": "https://registry.npmjs.org/graphite/-/graphite-0.0.6.tgz",
+      "dependencies": {
+        "request": {
+          "version": "2.1.1",
+          "from": "request@2.1.1",
+          "resolved": "https://registry.npmjs.org/request/-/request-2.1.1.tgz"
+        },
+        "lazy-socket": {
+          "version": "0.0.3",
+          "from": "lazy-socket@0.0.3",
+          "resolved": "https://registry.npmjs.org/lazy-socket/-/lazy-socket-0.0.3.tgz"
+        }
+      }
+    },
+    "lodash": {
+      "version": "2.4.1",
+      "from": "lodash@"
+    },
+    "nomnom": {
+      "version": "1.8.1",
+      "from": "nomnom@",
+      "resolved": "https://registry.npmjs.org/nomnom/-/nomnom-1.8.1.tgz",
+      "dependencies": {
+        "underscore": {
+          "version": "1.6.0",
+          "from": "underscore@~1.6.0"
+        },
+        "chalk": {
+          "version": "0.4.0",
+          "from": "chalk@~0.4.0",
+          "dependencies": {
+            "has-color": {
+              "version": "0.1.7",
+              "from": "has-color@~0.1.0"
+            },
+            "ansi-styles": {
+              "version": "1.0.0",
+              "from": "ansi-styles@~1.0.0"
+            },
+            "strip-ansi": {
+              "version": "0.1.1",
+              "from": "strip-ansi@~0.1.0"
+            }
+          }
+        }
+      }
+    }
+  }
+}

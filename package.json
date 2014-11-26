@@ -1,0 +1,36 @@
+{
+  "name": "cloudwatch-conveyor",
+  "version": "0.0.0",
+  "description": "Ship AWS Cloudwatch metrics to various backends",
+  "main": "application.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/normanjoyner/cloudwatch-conveyor.git"
+  },
+  "keywords": [
+    "cloudwatch",
+    "graphite",
+    "metrics",
+    "stats",
+    "AWS"
+  ],
+  "author": "Norman Joyner <norman.joyner@gmail.com>",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/normanjoyner/cloudwatch-conveyor/issues"
+  },
+  "homepage": "https://github.com/normanjoyner/cloudwatch-conveyor",
+  "bin": {
+    "cloudwatch-conveyor": "./application.js"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "aws-sdk": "^2.0.29",
+    "graphite": "0.0.6",
+    "lodash": "^2.4.1",
+    "nomnom": "^1.8.1"
+  }
+}
