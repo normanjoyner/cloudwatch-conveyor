@@ -12,7 +12,7 @@ Ship AWS Cloudwatch metrics to various backends. Once per minute, cloudwatch-con
 ## Getting Started
 
 ### Installing via NPM
-`npm install -g cloud-watchconveyor`
+`npm install -g cloudwatch-conveyor`
 
 ### Running locally
 `cloudwatch-conveyor`
