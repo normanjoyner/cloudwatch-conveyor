@@ -1,6 +1,6 @@
 {
   "name": "cloudwatch-conveyor",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Ship AWS Cloudwatch metrics to various backends",
   "main": "application.js",
   "scripts": {
