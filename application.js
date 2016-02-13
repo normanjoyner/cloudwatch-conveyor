@@ -2,110 +2,79 @@
 var fs = require("fs");
 var _ = require("lodash");
 var async = require("async");
-var nomnom = require("nomnom");
 var pkg = require([__dirname, "package"].join("/"));
 var AWS = require([__dirname, "lib", "aws"].join("/"));
+var backends = require([__dirname, "backends"].join("/"));
+var schedule = require("node-schedule");
 
-nomnom.script(pkg.name);
-nomnom.option("version", {
-    flag: true,
-    abbr: "v",
-    help: "print version and exit",
-    callback: function(){
-        return pkg.version;
+var config = {
+    aws: {
+        region: process.env.AWS_REGION || "us-east-1",
+        access_key_id: process.env.AWS_ACCESS_KEY_ID,
+        secret_access_key: process.env.AWS_SECRET_ACCESS_KEY
+    },
+    backend: {
+        name: process.env.BACKEND_NAME || "stdout"
     }
-});
+}
 
-nomnom.option("backend", {
-    abbr: "b",
-    help: "Backend to ship metrics to",
-    choices: ["graphite"],
-    required: true
-});
+if(config.backend.name == "graphite"){
+    config.backend.host = process.env.GRAPHITE_HOST || "localhost";
+    config.backend.port = process.env.GRAPHITE_PORT || 2003;
+}
 
-nomnom.option("graphite-host", {
-    help: "Address of the graphite server",
-    default: "localhost",
-    required: false
-});
+if(config.backend.name == "influxdb"){
+    config.backend.host = process.env.INFLUXDB_HOST || "localhost";
+    config.backend.port = process.env.INFLUXDB_PORT || 8086;
+    config.backend.username = process.env.INFLUXDB_USERNAME;
+    config.backend.password = process.env.INFLUXDB_PASSWORD;
+    config.backend.database = process.env.INFLUXDB_DATABASE || "elb-metrics";
+}
 
-nomnom.option("graphite-port", {
-    help: "Address of the graphite server",
-    default: "2003",
-    required: false
-});
-
-nomnom.option("region", {
-    help: "AWS Region",
-    default: "us-east-1",
-    required: false
-});
-
-nomnom.option("access-key-id", {
-    abbr: "a",
-    help: "AWS access key id",
-    required: true
-});
-
-nomnom.option("secret-access-key", {
-    abbr: "s",
-    help: "AWS secret access key",
-    required: true
-});
-
-var opts = nomnom.parse();
-
-var backends = {};
-var available_backends = fs.readdirSync([__dirname, "backends"].join("/"));
-_.each(available_backends, function(backend){
-    var backend_name = backend.split(".")[0];
-    backends[backend_name] = require([__dirname, "backends", backend].join("/"));
-});
-
-if(opts.backend == "graphite")
-    var backend = new backends[opts.backend](opts["graphite-host"], opts["graphite-port"]);
+var backend = new backends[config.backend.name](config.backend);
 
 var aws = new AWS({
-    region: opts.region,
+    region: config.aws.region,
     credentials: {
-        accessKeyId: opts["access-key-id"],
-        secretAccessKey: opts["secret-access-key"]
+        accessKeyId: config.aws.access_key_id,
+        secretAccessKey: config.aws.secret_access_key
     }
 });
 
-aws.get_loadbalancers(function(err, loadbalancers){
-    if(err){
-        console.log(err.message);
-        process.exit(1);
-    }
-    else{
-        async.each(loadbalancers, function(loadbalancer, fn){
-            aws.get_metrics(loadbalancer, function(metrics){
-                var prefix = {
-                    aws: {
-                        elb: {}
+schedule.scheduleJob("0 * * * * *", function(){
+    aws.get_loadbalancers(function(err, loadbalancers){
+        if(err){
+            console.log(err.message);
+            process.exit(1);
+        }
+        else{
+            async.each(loadbalancers, function(loadbalancer, fn){
+                aws.get_metrics(loadbalancer, function(metrics){
+                    var prefix = {
+                        aws: {
+                            elb: {}
+                        }
                     }
-                }
 
-                var graphite_metrics = {};
+                    var backend_metrics = {};
 
-                _.each(metrics, function(stats, metric){
-                    graphite_metrics[metric] = {};
-                    _.each(stats, function(value, stat){
-                        graphite_metrics[metric][stat] = value;
+                    _.each(metrics, function(stats, metric){
+                        backend_metrics[metric] = {};
+                        _.each(stats, function(value, stat){
+                            backend_metrics[metric][stat] = value;
+                        });
+                    });
+
+                    prefix.aws.elb[loadbalancer] = backend_metrics;
+                    backend.write(prefix, function(err){
+                        if(err)
+                            console.log(["Could not write metrics for", loadbalancer, "to", config.backend.name].join(" "));
+
+                        return fn();
                     });
                 });
-
-                prefix.aws.elb[loadbalancer] = graphite_metrics;
-                backend.write(prefix, function(err){
-                    if(err)
-                        console.log(["Could not write metrics for", loadbalancer, "to graphite!"].join(" "));
-
-                    return fn();
-                });
-            });
-        }, function(){
-            backend.end();
-        });
-    }
+            }, function(){});
+        }
+    });
 });
+
