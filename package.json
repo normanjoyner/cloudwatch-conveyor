@@ -29,8 +29,11 @@
   "dependencies": {
     "async": "^0.9.0",
     "aws-sdk": "^2.0.29",
+    "flat": "^2.0.0",
     "graphite": "0.0.6",
+    "influx": "^4.1.0",
     "lodash": "^2.4.1",
+    "node-schedule": "^1.0.0",
     "nomnom": "^1.8.1"
   }
 }
