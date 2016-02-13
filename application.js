@@ -28,8 +28,10 @@ if(config.backend.name == "influxdb"){
     config.backend.port = process.env.INFLUXDB_PORT || 8086;
     config.backend.username = process.env.INFLUXDB_USERNAME;
     config.backend.password = process.env.INFLUXDB_PASSWORD;
-    config.backend.database = process.env.INFLUXDB_DATABASE || "elb-metrics";
+    config.backend.database = process.env.INFLUXDB_DATABASE || "cloudwatch-metrics";
 }
+
+config.backend.name = config.backend.name.toLowerCase();
 
 var backend = new backends[config.backend.name](config.backend);
 
